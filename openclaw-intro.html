@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>OpenClaw 介绍</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4/dist/reveal.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4/dist/theme/black.css">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4/plugin/highlight/monokai.css">
+<style>
+:root {
+  --oc-red: #e63946;
+  --oc-blue: #457b9d;
+  --oc-cyan: #00d4aa;
+  --oc-gold: #f4a261;
+  --oc-dark: #0a0e17;
+  --oc-card: rgba(255,255,255,0.05);
+}
+* { box-sizing: border-box; }
+.reveal { font-family: 'Noto Sans SC', sans-serif; }
+.reveal .slides { text-align: left; }
+.reveal .slides section { padding: 10px 30px; font-size: 0.82em; overflow: hidden; }
+.reveal h1,.reveal h2,.reveal h3 { font-weight: 700; text-transform: none; letter-spacing: 0.02em; margin-bottom: 10px; }
+.reveal h2 { font-size: 1.6em !important; }
+.reveal p, .reveal li { font-size: 0.82em; line-height: 1.5; }
+
+/* Gradient text */
+.gt {
+  background: linear-gradient(135deg, var(--oc-cyan), var(--oc-blue), var(--oc-gold));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text; font-weight: 900;
+}
+
+/* Cards */
+.cg { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px; }
+.cg3 { grid-template-columns: 1fr 1fr 1fr; }
+.c {
+  background: var(--oc-card); border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 12px; padding: 14px 16px; backdrop-filter: blur(10px);
+  transition: all 0.4s cubic-bezier(.4,0,.2,1); cursor: default;
+}
+.c:hover { border-color: var(--oc-cyan); transform: translateY(-3px); box-shadow: 0 6px 24px rgba(0,212,170,0.12); }
+.c h4 { color: var(--oc-cyan); margin: 0 0 6px; font-size: 1.05em; }
+.c p { color: rgba(255,255,255,0.65); font-size: 0.88em; margin: 0; line-height: 1.45; }
+
+/* Flow */
+.flow { display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; margin: 15px 0; }
+.fn {
+  background: var(--oc-card); border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 10px; padding: 10px 16px; text-align: center; min-width: 100px;
+  transition: all 0.3s;
+}
+.fn:hover { border-color: var(--oc-cyan); background: rgba(0,212,170,0.08); }
+.fn.hl { border-color: var(--oc-cyan); background: rgba(0,212,170,0.1); }
+.fa { color: var(--oc-cyan); font-size: 1.2em; }
+
+/* Tags */
+.tag {
+  display: inline-block; padding: 4px 12px; border-radius: 16px;
+  font-size: 0.78em; margin: 3px; border: 1px solid rgba(255,255,255,0.12);
+  color: rgba(255,255,255,0.75); transition: all 0.3s;
+}
+.tag:hover { border-color: var(--oc-cyan); color: var(--oc-cyan); background: rgba(0,212,170,0.08); }
+
+/* Stats */
+.sg { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; margin: 15px 0; }
+.si { text-align: center; }
+.sn { font-size: 2.2em; font-weight: 900; color: var(--oc-cyan); }
+.sl { font-size: 0.8em; color: rgba(255,255,255,0.45); margin-top: 3px; }
+
+/* Security grid */
+.secg { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 12px; }
+.sc {
+  background: var(--oc-card); border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 12px; padding: 14px; text-align: center;
+  transition: all 0.4s cubic-bezier(.4,0,.2,1); cursor: default;
+}
+.sc:hover { border-color: var(--oc-red); transform: scale(1.06); box-shadow: 0 4px 20px rgba(230,57,70,0.15); }
+.sc-icon { font-size: 1.6em; margin-bottom: 6px; }
+.sc h4 { color: var(--oc-gold); font-size: 0.95em; margin: 0 0 5px; }
+.sc p { color: rgba(255,255,255,0.55); font-size: 0.78em; margin: 0; line-height: 1.4; }
+
+/* Code */
+.cb {
+  background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 8px; padding: 12px 16px; font-size: 0.78em;
+  line-height: 1.7; color: var(--oc-cyan); overflow-x: auto;
+  font-family: 'Consolas','Monaco',monospace;
+}
+
+/* Timeline */
+.tl { position: relative; padding-left: 24px; margin: 12px 0; }
+.tl::before { content:''; position:absolute; left:6px; top:0; bottom:0; width:2px; background:var(--oc-cyan); opacity:0.5; }
+.tli { position: relative; margin-bottom: 14px; }
+.tli::before { content:''; position:absolute; left:-20px; top:6px; width:10px; height:10px; border-radius:50%; background:var(--oc-cyan); }
+.tli h4 { color:var(--oc-cyan); margin:0 0 5px; font-size:1em; }
+
+/* Cover */
+.cs { color:rgba(255,255,255,0.45); font-size:1.1em; margin-top:12px; font-weight:300; }
+.ct { display:inline-block; margin-top:20px; padding:6px 20px; border:1px solid var(--oc-cyan); border-radius:24px; color:var(--oc-cyan); font-size:0.85em; transition: all 0.3s; cursor:pointer; }
+.ct:hover { background: rgba(0,212,170,0.15); }
+
+.lm {
+  width:64px; height:64px; background:linear-gradient(135deg,var(--oc-red),var(--oc-cyan));
+  border-radius:16px; display:flex; align-items:center; justify-content:center;
+  font-size:2em; margin-bottom:15px; box-shadow:0 6px 24px rgba(230,57,70,0.3);
+  transition: transform 0.5s;
+}
+.lm:hover { transform: rotate(15deg) scale(1.1); }
+
+/* Particles */
+.ptc { position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:0; }
+
+/* Progress bar */
+.reveal .progress { color: var(--oc-cyan); height: 4px; }
+.reveal .controls { color: var(--oc-cyan); }
+.reveal .slide-number { color: rgba(255,255,255,0.25); background: rgba(0,0,0,0.3); border-radius: 16px; padding: 4px 12px; font-size: 0.7em; }
+
+/* Clickable cards with ripple */
+.c, .sc { position: relative; overflow: hidden; }
+.c::after, .sc::after {
+  content:''; position:absolute; top:50%; left:50%; width:0; height:0;
+  background: rgba(0,212,170,0.15); border-radius:50%;
+  transform: translate(-50%,-50%); transition: width 0.5s, height 0.5s, opacity 0.5s; opacity:0;
+}
+.c:active::after, .sc:active::after { width:300px; height:300px; opacity:1; transition: 0s; }
+
+/* Tooltip on hover */
+.c .tip { display:none; position:absolute; bottom:100%; left:50%; transform:translateX(-50%); background:var(--oc-cyan); color:#000; padding:4px 10px; border-radius:6px; font-size:0.7em; white-space:nowrap; }
+.c:hover .tip { display:block; }
+
+/* Glow pulse */
+@keyframes glow { 0%,100%{box-shadow:0 0 5px rgba(0,212,170,0.2)} 50%{box-shadow:0 0 20px rgba(0,212,170,0.4)} }
+.glow { animation: glow 2s infinite; }
+
+/* Counter animation */
+@keyframes countUp { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+.count-anim { animation: countUp 0.6s ease-out forwards; }
+
+/* Slide-specific height fix */
+.reveal .slides section:not([data-background]) { min-height: 100vh; }
+</style>
+</head>
+<body>
+
+<div class="reveal">
+<div class="slides">
+
+<!-- Slide 1: Cover -->
+<section data-background-color="#0a0e17" style="text-align:center;display:flex;flex-direction:column;justify-content:center;align-items:center;height:100vh;">
+  <div class="lm glow">🦞</div>
+  <h1 class="gt" style="font-size:3.2em;line-height:1.1;">OpenClaw</h1>
+  <p class="cs">你的个人 AI 超级网关</p>
+  <p style="color:rgba(255,255,255,0.3);font-size:0.8em;">Any OS Gateway for AI Agents Across Any Platform</p>
+  <div class="ct" onclick="Reveal.next()">开始探索 →</div>
+  <p style="color:rgba(255,255,255,0.2);font-size:0.65em;margin-top:30px;">2026 · v2026.3 · 开源</p>
+</section>
+
+<!-- Slide 2: What is OpenClaw -->
+<section data-background-color="#0a0e17">
+  <h2><span class="gt">OpenClaw</span> 是什么？</h2>
+  <p style="color:rgba(255,255,255,0.55);font-size:0.82em;line-height:1.6;">
+    一个 <span style="color:var(--oc-gold);">开源的自托管网关</span>，将聊天应用连接到 AI 代理。<br>
+    在你的机器上运行 Gateway，它就成为消息应用与 AI 助手之间的桥梁。
+  </p>
+  <div class="cg fragment fade-up">
+    <div class="c">
+      <h4>🎯 为谁而生</h4>
+      <p>开发者和高级用户——想要可以随时随地通过消息交互的个人 AI 助手，不依赖托管服务。</p>
+    </div>
+    <div class="c">
+      <h4>⚡ 核心差异</h4>
+      <p>自托管（你的规则）· 多渠道（一个服务所有平台）· Agent 原生（不只是聊天机器人）。</p>
+    </div>
+    <div class="c">
+      <h4>🔒 隐私优先</h4>
+      <p>数据完全在本地，无需第三方云服务。你拥有完全的控制权和访问权限。</p>
+    </div>
+    <div class="c">
+      <h4>🌐 开源生态</h4>
+      <p>GitHub 开源，社区驱动，插件化架构，支持自定义扩展和二次开发。</p>
+    </div>
+  </div>
+</section>
+
+<!-- Slide 3: Architecture -->
+<section data-background-color="#0a0e17">
+  <h2>系统<span class="gt">架构</span></h2>
+  <p style="color:rgba(255,255,255,0.4);font-size:0.75em;">三层架构：Gateway · Agent · Plugins</p>
+  <div class="flow fragment fade-up" style="margin:10px 0;">
+    <div class="fn" style="padding:8px 12px;min-width:90px;">
+      <div style="font-size:1.2em;">💬</div>
+      <div style="font-size:0.7em;color:var(--oc-cyan);margin-top:3px;">聊天渠道</div>
+      <div style="font-size:0.55em;color:rgba(255,255,255,0.35);margin-top:2px;">飞书·TG·Discord…</div>
+    </div>
+    <div class="fa">→</div>
+    <div class="fn hl" style="padding:8px 12px;min-width:90px;">
+      <div style="font-size:1.2em;">🦞</div>
+      <div style="font-size:0.7em;color:var(--oc-cyan);margin-top:3px;">Gateway</div>
+      <div style="font-size:0.55em;color:rgba(255,255,255,0.35);margin-top:2px;">路由·会话管理</div>
+    </div>
+    <div class="fa">→</div>
+    <div class="fn" style="padding:8px 12px;min-width:90px;">
+      <div style="font-size:1.2em;">🤖</div>
+      <div style="font-size:0.7em;color:var(--oc-cyan);margin-top:3px;">Agent</div>
+      <div style="font-size:0.55em;color:rgba(255,255,255,0.35);margin-top:2px;">推理·记忆·技能</div>
+    </div>
+    <div class="fa">→</div>
+    <div class="fn" style="padding:8px 12px;min-width:90px;">
+      <div style="font-size:1.2em;">🔧</div>
+      <div style="font-size:0.7em;color:var(--oc-cyan);margin-top:3px;">Tools</div>
+      <div style="font-size:0.55em;color:rgba(255,255,255,0.35);margin-top:2px;">浏览器·搜索·API</div>
+    </div>
+  </div>
+  <div class="cg fragment fade-up" style="margin-top:8px;">
+    <div class="c" style="padding:10px 14px;">
+      <h4 style="font-size:1em;">📦 Gateway 网关</h4>
+      <p style="font-size:0.85em;">核心进程，消息收发、渠道适配、会话管理和工具调度。支持 WebSocket 长连接和 Webhook。</p>
+    </div>
+    <div class="c" style="padding:10px 14px;">
+      <h4 style="font-size:1em;">🧩 Plugins 插件</h4>
+      <p style="font-size:0.85em;">模块化渠道适配器，每个平台一个插件。内置飞书、TG、Discord、WhatsApp 等，支持自定义。</p>
+    </div>
+  </div>
+</section>
+
+<!-- Slide 4: Core Capabilities -->
+<section data-background-color="#0a0e17">
+  <h2><span class="gt">核心能力</span></h2>
+  <div class="sg fragment fade-up" style="margin:10px 0;">
+    <div class="si"><div class="sn" style="font-size:1.8em;" data-count="20">20+</div><div class="sl">支持渠道</div></div>
+    <div class="si"><div class="sn" style="font-size:1.8em;">∞</div><div class="sl">模型接入</div></div>
+    <div class="si"><div class="sn" style="font-size:1.8em;">12+</div><div class="sl">内置技能</div></div>
+  </div>
+  <div class="cg fragment fade-up" style="gap:10px;">
+    <div class="c" style="padding:10px 14px;">
+      <h4 style="font-size:1em;">🤖 多模型支持</h4>
+      <p style="font-size:0.84em;">OpenAI · Anthropic · Gemini · MiniMax · GLM · DeepSeek…支持会话级切换。</p>
+    </div>
+    <div class="c" style="padding:10px 14px;">
+      <h4 style="font-size:1em;">💬 多渠道统一</h4>
+      <p style="font-size:0.84em;">一个 Gateway 同时服务飞书、TG、Discord、WhatsApp，上下文按会话隔离。</p>
+    </div>
+    <div class="c" style="padding:10px 14px;">
+      <h4 style="font-size:1em;">🛠️ 工具链</h4>
+      <p style="font-size:0.84em;">浏览器自动化 · 文件系统 · Web 搜索 · 代码执行 · 飞书 · GitHub · Canvas。</p>
+    </div>
+    <div class="c" style="padding:10px 14px;">
+      <h4 style="font-size:1em;">🧠 记忆系统</h4>
+      <p style="font-size:0.84em;">MEMORY.md 长期记忆 + 日志短期记忆，语义搜索回忆，自动加载上下文。</p>
+    </div>
+  </div>
+</section>
+
+<!-- Slide 5: Deployment -->
+<section data-background-color="#0a0e17">
+  <h2>部署<span class="gt">方式</span></h2>
+  <div class="cg">
+    <div class="c fragment fade-up" style="border-color:rgba(0,212,170,0.2);">
+      <h4>🏠 本地部署</h4>
+      <p>在自己电脑上运行，数据完全本地，延迟最低。</p>
+      <div class="cb" style="margin-top:8px;font-size:0.72em;">npm i -g openclaw<br>openclaw onboard<br>openclaw gateway start</div>
+    </div>
+    <div class="c fragment fade-up" style="border-color:rgba(244,162,97,0.2);">
+      <h4>☁️ VPS / 云服务器</h4>
+      <p>7×24 在线，支持 Tailscale 内网穿透，随时响应。</p>
+      <div class="cb" style="margin-top:8px;font-size:0.72em;">openclaw gateway install<br>openclaw gateway start</div>
+    </div>
+    <div class="c fragment fade-up">
+      <h4>🐳 Docker</h4>
+      <p>容器化一键部署，环境隔离，升级方便。</p>
+      <div style="margin-top:6px;">
+        <span class="tag">Docker</span><span class="tag">CI/CD</span><span class="tag">一键部署</span>
+      </div>
+    </div>
+    <div class="c fragment fade-up">
+      <h4>📱 移动节点</h4>
+      <p>Android/iOS/macOS 客户端连接 Gateway。</p>
+      <div style="margin-top:6px;">
+        <span class="tag">Android</span><span class="tag">iOS</span><span class="tag">macOS</span><span class="tag">Tailscale</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Slide 6: Plugin Ecosystem -->
+<section data-background-color="#0a0e17">
+  <h2>插件<span class="gt">生态</span></h2>
+  <p style="color:rgba(255,255,255,0.4);font-size:0.78em;">模块化架构，即插即用</p>
+  <div style="display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:12px;" class="fragment fade-up">
+    <span class="tag" style="padding:6px 14px;">💬 飞书</span>
+    <span class="tag" style="padding:6px 14px;">✈️ Telegram</span>
+    <span class="tag" style="padding:6px 14px;">🎮 Discord</span>
+    <span class="tag" style="padding:6px 14px;">📱 WhatsApp</span>
+    <span class="tag" style="padding:6px 14px;">📡 Signal</span>
+    <span class="tag" style="padding:6px 14px;">📝 Slack</span>
+    <span class="tag" style="padding:6px 14px;">🐦 IRC</span>
+    <span class="tag" style="padding:6px 14px;">🔵 Matrix</span>
+    <span class="tag" style="padding:6px 14px;">💼 Google Chat</span>
+    <span class="tag" style="padding:6px 14px;">🔷 Teams</span>
+    <span class="tag" style="padding:6px 14px;">🧵 Mattermost</span>
+    <span class="tag" style="padding:6px 14px;">💬 LINE</span>
+    <span class="tag" style="padding:6px 14px;">🍎 iMessage</span>
+    <span class="tag" style="padding:6px 14px;">🌊 Nostr</span>
+  </div>
+  <div class="c fragment fade-up" style="margin-top:12px;">
+    <h4>🧰 AgentSkills 技能系统</h4>
+    <p>飞书文档操作 · GitHub Issues 修复 · 天气查询 · 网页 PPT · AI 绘图 · 安全审计 · 浏览器自动化……社区持续贡献，支持自定义开发。</p>
+  </div>
+</section>
+
+<!-- Slide 7: Use Cases -->
+<section data-background-color="#0a0e17">
+  <h2>典型<span class="gt">应用场景</span></h2>
+  <div class="cg">
+    <div class="c fragment fade-up">
+      <h4>🎓 智能客服 & 助教</h4>
+      <p>接入飞书/企业微信，AI 助教自动答疑、批改作业、管理通知。</p>
+    </div>
+    <div class="c fragment fade-up">
+      <h4>💻 AI 编程助手</h4>
+      <p>连接 GitHub，自动处理 Issues、提交 PR、Code Review。</p>
+    </div>
+    <div class="c fragment fade-up">
+      <h4>📚 知识管理</h4>
+      <p>飞书文档/Wiki/多维表格，自动整理纪要、知识库维护。</p>
+    </div>
+    <div class="c fragment fade-up">
+      <h4>⚡ 自动化工作流</h4>
+      <p>Cron 定时任务 + 心跳检查：邮件、日历、网页监控。</p>
+    </div>
+    <div class="c fragment fade-up">
+      <h4>🎨 内容创作</h4>
+      <p>AI 绘图、网页 PPT、文案撰写、文档排版。</p>
+    </div>
+    <div class="c fragment fade-up">
+      <h4>🔍 研究助手</h4>
+      <p>Web 搜索 + 浏览器自动化 + 文档整理。</p>
+    </div>
+  </div>
+</section>
+
+<!-- Slide 8: Security -->
+<section data-background-color="#0a0e17">
+  <h2>安全<span style="color:var(--oc-red);">设计</span></h2>
+  <p style="color:rgba(255,255,255,0.4);font-size:0.78em;">安全是自托管架构的核心优势</p>
+  <div class="secg fragment fade-up" style="margin-top:12px;">
+    <div class="sc">
+      <div class="sc-icon">🔐</div>
+      <h4>数据本地化</h4>
+      <p>数据存储在本地，不上传第三方，100% 数据所有权。</p>
+    </div>
+    <div class="sc">
+      <div class="sc-icon">🛡️</div>
+      <h4>权限控制</h4>
+      <p>群聊白名单、用户级访问控制、工具审批机制。</p>
+    </div>
+    <div class="sc">
+      <div class="sc-icon">📦</div>
+      <h4>沙箱隔离</h4>
+      <p>子代理独立运行，危险操作需人工确认。</p>
+    </div>
+    <div class="sc">
+      <div class="sc-icon">🔑</div>
+      <h4>凭证管理</h4>
+      <p>API Key 加密存储，支持 Keyring，绝不明文传输。</p>
+    </div>
+    <div class="sc">
+      <div class="sc-icon">📋</div>
+      <h4>审计日志</h4>
+      <p>完整会话日志和工具调用记录，可追溯。</p>
+    </div>
+    <div class="sc">
+      <div class="sc-icon">🌐</div>
+      <h4>网络安全</h4>
+      <p>HTTPS、Tailscale、IP 白名单，可完全内网部署。</p>
+    </div>
+  </div>
+</section>
+
+<!-- Slide 9: Quick Start -->
+<section data-background-color="#0a0e17">
+  <h2>快速<span class="gt">上手</span></h2>
+  <div class="tl" style="margin:8px 0;">
+    <div class="tli fragment fade-up" style="margin-bottom:10px;">
+      <h4>Step 1 · 安装</h4>
+      <div class="cb" style="margin-top:4px;font-size:0.72em;">npm install -g openclaw</div>
+      <p style="color:rgba(255,255,255,0.4);font-size:0.7em;margin-top:2px;">需要 Node.js 18+</p>
+    </div>
+    <div class="tli fragment fade-up" style="margin-bottom:10px;">
+      <h4>Step 2 · 引导配置</h4>
+      <div class="cb" style="margin-top:4px;font-size:0.72em;">openclaw onboard</div>
+      <p style="color:rgba(255,255,255,0.4);font-size:0.7em;margin-top:2px;">选模型、配渠道、设权限</p>
+    </div>
+    <div class="tli fragment fade-up">
+      <h4>Step 3 · 启动</h4>
+      <div class="cb" style="margin-top:4px;font-size:0.72em;">openclaw gateway start</div>
+      <p style="color:rgba(255,255,255,0.4);font-size:0.7em;margin-top:2px;">启动网关，开始对话！</p>
+    </div>
+  </div>
+  <div class="fragment fade-up" style="margin-top:8px;text-align:center;">
+    <p style="color:rgba(255,255,255,0.5);font-size:0.78em;">
+      📖 <span style="color:var(--oc-cyan);">docs.openclaw.ai</span> ·
+      💬 <span style="color:var(--oc-cyan);">discord.com/invite/clawd</span> ·
+      🐙 <span style="color:var(--oc-cyan);">github.com/openclaw/openclaw</span>
+    </p>
+  </div>
+</section>
+
+<!-- Slide 10: Summary -->
+<section data-background-color="#0a0e17" style="text-align:center;display:flex;flex-direction:column;justify-content:center;align-items:center;height:100vh;">
+  <div class="lm glow" style="margin:0 auto 15px;">🦞</div>
+  <h1 class="gt" style="font-size:2.8em;">Thank You</h1>
+  <p style="color:rgba(255,255,255,0.55);font-size:1em;margin-top:10px;">OpenClaw — 让 AI 触手可及</p>
+  <div style="display:flex;gap:10px;justify-content:center;margin-top:20px;flex-wrap:wrap;">
+    <span class="ct" style="margin:0;cursor:default;">自托管</span>
+    <span class="ct" style="margin:0;cursor:default;">开源</span>
+    <span class="ct" style="margin:0;cursor:default;">多渠道</span>
+    <span class="ct" style="margin:0;cursor:default;">隐私优先</span>
+  </div>
+  <p style="color:rgba(255,255,255,0.25);font-size:0.75em;margin-top:30px;">
+    Q&A · 提问环节<br>
+    <span style="font-size:0.85em;">docs.openclaw.ai · discord.com/invite/clawd</span>
+  </p>
+</section>
+
+</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@4/dist/reveal.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@4/plugin/highlight/highlight.js"></script>
+<script>
+// Particles
+const cv=document.createElement('canvas');cv.className='ptc';document.body.appendChild(cv);
+const cx=cv.getContext('2d');let pts=[];
+function rs(){cv.width=innerWidth;cv.height=innerHeight}rs();addEventListener('resize',rs);
+for(let i=0;i<50;i++)pts.push({x:Math.random()*innerWidth,y:Math.random()*innerHeight,
+  vx:(Math.random()-.5)*.25,vy:(Math.random()-.5)*.25,r:Math.random()*1.2+.4,o:Math.random()*.25+.08});
+
+let mouse={x:-1000,y:-1000};
+document.addEventListener('mousemove',e=>{mouse.x=e.clientX;mouse.y=e.clientY});
+document.addEventListener('mouseleave',()=>{mouse.x=-1000;mouse.y=-1000});
+
+function draw(){
+  cx.clearRect(0,0,cv.width,cv.height);
+  pts.forEach(p=>{
+    p.x+=p.vx;p.y+=p.vy;
+    if(p.x<0)p.x=cv.width;if(p.x>cv.width)p.x=0;
+    if(p.y<0)p.y=cv.height;if(p.y>cv.height)p.y=0;
+    // Mouse repulsion
+    const dx=p.x-mouse.x,dy=p.y-mouse.y,dist=Math.sqrt(dx*dx+dy*dy);
+    if(dist<100&&dist>0){p.x+=dx/dist*1.5;p.y+=dy/dist*1.5;}
+    cx.beginPath();cx.arc(p.x,p.y,p.r,0,Math.PI*2);
+    cx.fillStyle=`rgba(0,212,170,${p.o})`;cx.fill();
+  });
+  for(let i=0;i<pts.length;i++)for(let j=i+1;j<pts.length;j++){
+    const dx=pts[i].x-pts[j].x,dy=pts[i].y-pts[j].y,d=Math.sqrt(dx*dx+dy*dy);
+    if(d<100){cx.beginPath();cx.moveTo(pts[i].x,pts[i].y);cx.lineTo(pts[j].x,pts[j].y);
+    cx.strokeStyle=`rgba(0,212,170,${0.05*(1-d/100)})`;cx.stroke();}
+  }
+  requestAnimationFrame(draw);
+}
+draw();
+
+// Cursor glow
+const glow=document.createElement('div');
+Object.assign(glow.style,{position:'fixed',width:'300px',height:'300px',borderRadius:'50%',
+  background:'radial-gradient(circle,rgba(0,212,170,0.06) 0%,transparent 70%)',
+  pointerEvents:'none',zIndex:'1',transform:'translate(-50%,-50%)',transition:'opacity 0.3s'});
+document.body.appendChild(glow);
+document.addEventListener('mousemove',e=>{glow.style.left=e.clientX+'px';glow.style.top=e.clientY+'px'});
+
+Reveal.initialize({
+  hash:true,slideNumber:true,transition:'slide',transitionSpeed:'default',
+  backgroundTransition:'fade',width:1100,height:700,center:false,
+  margin:0.02,highlightTheme:'monokai',plugins:[RevealHighlight],
+  keyboard:true,overview:true,touch:true,loop:false,progress:true,controls:true,
+  maxScale:1,minScale:0.5
+});
+
+// Counter animation on slide 4
+Reveal.on('slidechanged',e=>{
+  if(e.indexh===3){
+    document.querySelectorAll('.sn[data-count]').forEach(el=>{
+      const target=el.textContent;el.textContent='0';el.classList.remove('count-anim');
+      void el.offsetWidth;
+      let n=0;const step=Math.ceil(parseInt(target)/20);
+      const timer=setInterval(()=>{n+=step;if(n>=parseInt(target)){n=parseInt(target);clearInterval(timer);}el.textContent=n+'+';},40);
+      el.classList.add('count-anim');
+    });
+  }
+});
+</script>
+</body>
+</html>
